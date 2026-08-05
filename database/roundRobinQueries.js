@@ -13,8 +13,9 @@ ensureRoundNumberColumn();
 
 export function getAllPlayers() {
   return db.prepare(`
-    SELECT id, name, level
+    SELECT id, name, level, doubles_category
     FROM players
+    WHERE registration_date = date('now')
     ORDER BY name ASC
   `).all();
 }
@@ -96,10 +97,19 @@ export function saveRoundRobinMatches(matches) {
     VALUES (?, ?, ?, ?, 'round_robin')
   `);
 
-  const transaction = db.transaction(() => {
+const transaction = db.transaction(() => {
+    // Free courts that were hosting round-robin matches (just deleted above),
+    // but do NOT reset courts that still have an active normal queue match.
+    // Without this guard, a court could end up with both a normal match and a
+    // round-robin match marked 'playing', which corrupts the display on the
+    // Courts page (wrong/variable player counts and missing VS).
     db.prepare(`
       UPDATE courts
       SET status = 'available'
+      WHERE status = 'playing'
+        AND id NOT IN (
+          SELECT court_id FROM matches WHERE status = 'playing'
+        )
     `).run();
 
     for (const match of matches) {

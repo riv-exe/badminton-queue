@@ -13,7 +13,7 @@ import {
   addToQueue,
   removeFromQueue
 } from "../database/queueQueries.js";
-import { addPlayer, deletePlayer, updatePlayer } from "../database/playerQueries.js";
+import { addPlayer, deletePlayer, updatePlayer, getPermanentPlayers, getPlayerProfile, searchPlayerProfiles, findPlayerProfileByName, createPlayerProfile, updatePlayerProfile, deletePlayerProfile, registerDailyPlayer, getDailyPlayers, resetDailySystem } from "../database/playerQueries.js";
 import { createMatch, previewNextMatch } from "../database/matchQueries.js";
 import {
   addCourt,
@@ -131,6 +131,48 @@ ipcMain.handle("delete-player", (event, id) => {
 
 ipcMain.handle("update-player", (event, id, name, level) => {
   return updatePlayer(id, name, level);
+});
+
+// Player Profiles (permanent players)
+ipcMain.handle("get-permanent-players", () => {
+  return getPermanentPlayers();
+});
+
+ipcMain.handle("get-player-profile", (event, id) => {
+  return getPlayerProfile(id);
+});
+
+ipcMain.handle("search-player-profiles", (event, searchTerm) => {
+  return searchPlayerProfiles(searchTerm || "");
+});
+
+ipcMain.handle("find-player-profile-by-name", (event, name) => {
+  return findPlayerProfileByName(name || "");
+});
+
+ipcMain.handle("create-player-profile", (event, profile) => {
+  return createPlayerProfile(profile || {});
+});
+
+ipcMain.handle("update-player-profile", (event, id, profile) => {
+  return updatePlayerProfile(id, profile || {});
+});
+
+ipcMain.handle("delete-player-profile", (event, id) => {
+  return deletePlayerProfile(id);
+});
+
+// Daily registration
+ipcMain.handle("register-daily-player", (event, data) => {
+  return registerDailyPlayer(data || {});
+});
+
+ipcMain.handle("get-daily-players", () => {
+  return getDailyPlayers();
+});
+
+ipcMain.handle("reset-daily-system", () => {
+  return resetDailySystem();
 });
 
 //matches

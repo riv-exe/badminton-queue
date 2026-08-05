@@ -57,8 +57,12 @@ export default function RoundRobin() {
     setCourts(allCourts);
   }
 
-  useEffect(() => {
-    loadData();
+useEffect(() => {
+    Promise.all([window.api.getRRPlayers(), window.api.getRRMatches(), window.api.getCourts()]).then(([p, m, c]) => {
+      setPlayers(p);
+      setMatches(m);
+      setCourts(c);
+    }).catch((err) => console.error("Failed to load round robin data:", err));
   }, []);
 
   function togglePlayer(id) {

@@ -37,8 +37,8 @@ export default function Courts() {
     setCourts(data);
   };
 
-  useEffect(() => {
-    loadCourts();
+useEffect(() => {
+    window.api.getCourts().then((data) => setCourts(data)).catch((err) => console.error("Failed to load courts:", err));
   }, []);
 
   useEffect(() => {

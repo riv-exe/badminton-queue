@@ -4,11 +4,12 @@ export function resetAllData() {
 
     const reset = db.transaction(() => {
 
-        db.prepare("DELETE FROM match_players").run();
+db.prepare("DELETE FROM match_players").run();
         db.prepare("DELETE FROM round_robin_matches").run();
         db.prepare("DELETE FROM matches").run();
         db.prepare("DELETE FROM queue").run();
         db.prepare("DELETE FROM players").run();
+        db.prepare("DELETE FROM player_profiles").run();
         db.prepare("DELETE FROM courts").run();
 
         db.prepare(`

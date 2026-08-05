@@ -1,14 +1,14 @@
-# Settings Page Revamp — Task Tracking
+# Player Profile & Daily Registration Refactor — Task Tracking
 
 ## Steps
-
-- [x] 1. Create `database/settingsQueries.js` (get/set settings helpers using existing `settings` table)
-- [x] 2. Wire up IPC handlers in `electron/main.js` (`get-settings`, `update-setting`)
-- [x] 3. Expose `getSettings` / `updateSetting` in `electron/preload.cjs`
-- [x] 4. Update `src/index.css` — make dark theme class-based (`.dark` / `.light` / system) so theme switching works
-- [x] 5. Create `src/pages/Settings.jsx` — full-featured settings page (stats, appearance, preferences, data management, about)
-- [x] 6. Update `src/App.jsx` — import new Settings page, apply persisted theme on startup
-- [x] 7. Update `src/pages/Queue.jsx` — read default match type from settings
-- [x] 8. Update `src/pages/Courts.jsx` — read auto-requeue default from settings
-- [x] 9. Verify build with `npm run build` — ✅ Build succeeded (vite 8.1.5, 1801 modules, 2.49s)
-
+- [x] 1. Update `database/init.js` — create `player_profiles` table, add `profile_id`, `doubles_category`, `registration_date` columns to `players`, migration to link existing players
+- [x] 2. Update `database/playerQueries.js` — add profile CRUD, search, daily registration, getDailyPlayers, getPermanentPlayers (removed contact/preferred level/preferred mode from registration)
+- [x] 3. Update `electron/main.js` + `electron/preload.cjs` — expose new IPC handlers
+- [x] 4. Update `database/roundRobinQueries.js` — use today's players only
+- [x] 5. Create `src/components/PlayerRegistration.jsx` — autocomplete registration form (removed contact/preferred level/preferred mode fields)
+- [x] 6. Create `src/pages/TodayPlayers.jsx` — today's registered players page
+- [x] 7. Create `src/pages/AllPlayers.jsx` + `src/components/players/AllPlayersTable.jsx` — permanent player db page (removed Contact column)
+- [x] 8. Update `src/components/Sidebar.jsx` — collapsible groups (Queue, Players)
+- [x] 9. Update `src/App.jsx` — wire new pages & routing
+- [x] 10. Verify build with `npm run build` — ✅ Build succeeded
+- [x] 11. Verify lint with `npm run lint` — ✅ Passed cleanly

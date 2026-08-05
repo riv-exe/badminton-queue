@@ -5,7 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import Queue from "./pages/Queue";
 import RoundRobin from "./pages/RoundRobin";
 import Courts from "./pages/Courts";
-import Players from "./pages/Players";
+import TodayPlayers from "./pages/TodayPlayers";
+import AllPlayers from "./pages/AllPlayers";
 import PublicDisplayPage from "./pages/PublicDisplayPage";
 import Settings from "./pages/Settings";
 
@@ -14,7 +15,8 @@ const pageTitles = {
   queue: "Rotation Queue Management",
   roundrobin: "Round Robin Management",
   courts: "Court Management",
-  players: "Player Management",
+  todayplayers: "Today's Registered Players",
+  allplayers: "All Registered Players",
   public: "Public Display",
   settings: "Settings",
 };
@@ -52,10 +54,12 @@ function App() {
         return <Queue />;
       case "roundrobin":
         return <RoundRobin />;
-      case "courts":
+case "courts":
         return <Courts />;
-      case "players":
-        return <Players />;
+      case "todayplayers":
+        return <TodayPlayers />;
+      case "allplayers":
+        return <AllPlayers />;
       case "public":
         return <PublicDisplayPage />;
       case "settings":

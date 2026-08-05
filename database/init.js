@@ -5,6 +5,20 @@ const initDatabase = db.transaction(() => {
 
 db.exec(`
 
+-- Permanent player profiles (long-term database)
+CREATE TABLE IF NOT EXISTS player_profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    level TEXT NOT NULL DEFAULT 'Beginner',
+    contact_info TEXT DEFAULT '',
+    doubles_category TEXT DEFAULT 'No Gender Preference',
+    -- Men's Doubles | Women's Doubles | Mixed Doubles | No Gender Preference
+    preferred_level TEXT DEFAULT '',
+    preferred_mode TEXT DEFAULT '',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Daily registration table (today's registered players)
 CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -16,6 +30,10 @@ CREATE TABLE IF NOT EXISTS players (
 
     status TEXT DEFAULT 'waiting',
     -- waiting | playing | finished
+
+doubles_category TEXT DEFAULT 'No Gender Preference',
+    registration_date TEXT DEFAULT CURRENT_DATE,
+    profile_id INTEGER REFERENCES player_profiles(id) ON DELETE SET NULL,
 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -176,5 +194,54 @@ const migration = db.transaction(() => {
 });
 
 migration();
+
+// ---- MIGRATION v3: separate permanent player profiles from daily registrations ----
+
+const profileMigration = db.transaction(() => {
+  const profileVersion = db.prepare(
+    `SELECT value FROM settings WHERE key = 'schema_version'`
+  ).get();
+
+  if (profileVersion && profileVersion.value === '3') {
+    console.log("Schema already at version: 3");
+    return;
+  }
+
+  const playersInfo = db.prepare(`PRAGMA table_info(players)`).all();
+  const hasDoublesCat = playersInfo.some((col) => col.name === "doubles_category");
+  const hasRegDate = playersInfo.some((col) => col.name === "registration_date");
+  const hasProfileId = playersInfo.some((col) => col.name === "profile_id");
+
+  if (!hasDoublesCat) {
+    db.prepare(`ALTER TABLE players ADD COLUMN doubles_category TEXT DEFAULT 'No Gender Preference'`).run();
+  }
+if (!hasRegDate) {
+    db.prepare(`ALTER TABLE players ADD COLUMN registration_date TEXT DEFAULT CURRENT_DATE`).run();
+  }
+  if (!hasProfileId) {
+    db.prepare(`ALTER TABLE players ADD COLUMN profile_id INTEGER REFERENCES player_profiles(id) ON DELETE SET NULL`).run();
+  }
+
+  // Backfill player_profiles from existing players and link them
+  const players = db.prepare(`SELECT * FROM players`).all();
+  const insertProfile = db.prepare(`
+    INSERT INTO player_profiles (name, level, created_at)
+    VALUES (?, ?, COALESCE(?, CURRENT_TIMESTAMP))
+  `);
+  const linkProfile = db.prepare(`
+    UPDATE players SET profile_id = ? WHERE id = ?
+  `);
+
+  for (const player of players) {
+    if (player.profile_id) continue;
+    const result = insertProfile.run(player.name, player.level, player.created_at);
+    linkProfile.run(result.lastInsertRowid, player.id);
+  }
+
+  db.prepare(`INSERT OR REPLACE INTO settings (key, value) VALUES ('schema_version', '3')`).run();
+  console.log("Migration to schema v3 complete (player profiles separated)");
+});
+
+profileMigration();
 
 console.log("Database initialized");

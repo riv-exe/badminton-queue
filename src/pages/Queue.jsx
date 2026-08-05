@@ -9,23 +9,11 @@ export default function Queue() {
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
 
-  const loadData = async () => {
-    const [queueData, playerData] = await Promise.all([
-      window.api.getQueue(),
-      window.api.getPlayers()
-    ]);
-    console.log("Queue data:", queueData);
-    setQueue(queueData);
-    setPlayers(playerData);
-  };
-
-const loadPreview = async () => {
-    const previewData = await window.api.previewNextMatch(matchType);
-    setPreview(previewData);
-  };
-
-  useEffect(() => {
-    loadData();
+useEffect(() => {
+    Promise.all([window.api.getQueue(), window.api.getPlayers()]).then(([q, p]) => {
+      setQueue(q);
+      setPlayers(p);
+    }).catch((err) => console.error("Failed to load queue data:", err));
   }, []);
 
   useEffect(() => {
@@ -37,10 +25,11 @@ const loadPreview = async () => {
     }).catch((err) => console.error("Failed to load default match type:", err));
   }, []);
 
-  useEffect(() => {
-    // Reset preview when matchType changes to avoid stale data mismatch
-    setPreview(null);
-    loadPreview();
+useEffect(() => {
+    // Refresh preview when matchType / queue changes
+    window.api.previewNextMatch(matchType).then((p) => {
+      setPreview(p);
+    }).catch((err) => console.error("Failed to load preview:", err));
   }, [matchType, queue]);
 
   const handleRemovePlayer = async (id) => {

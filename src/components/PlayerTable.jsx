@@ -142,11 +142,11 @@ export default function PlayerTable({ players, onDeletePlayer, onUpdatePlayer })
                         >
                           Edit
                         </button>
-                        <button
+<button
                           onClick={() => onDeletePlayer?.(player.id)}
                           disabled={player.status === "playing"}
                           title={player.status === "playing" ? "Cannot delete a player who is currently playing" : "Delete player"}
-                          className="px-3 py-1.5 rounded-lg bg-[var(--danger-light)] text-[var(--danger)] text-xs font-semibold hover:opacity-80 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="px-3 py-1.5 rounded-lg bg-[var(--danger)] text-white text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           {player.status === "playing" ? "In Match" : "Delete"}
                         </button>
