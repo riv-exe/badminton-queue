@@ -2,8 +2,6 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 
 contextBridge.exposeInMainWorld("api", {
-
-  // Players
   getPlayers: () =>
     ipcRenderer.invoke("get-players"),
 
@@ -15,8 +13,6 @@ addPlayer: (name, level) =>
 
 updatePlayer: (id, name, level) =>
     ipcRenderer.invoke("update-player", id, name, level),
-
-  // Player Profiles (permanent players)
   getPermanentPlayers: () =>
     ipcRenderer.invoke("get-permanent-players"),
   getPlayerProfile: (id) =>
@@ -31,18 +27,12 @@ updatePlayer: (id, name, level) =>
     ipcRenderer.invoke("update-player-profile", id, profile),
   deletePlayerProfile: (id) =>
     ipcRenderer.invoke("delete-player-profile", id),
-
-  // Daily registration
   registerDailyPlayer: (data) =>
     ipcRenderer.invoke("register-daily-player", data),
   getDailyPlayers: () =>
     ipcRenderer.invoke("get-daily-players"),
   resetDailySystem: () =>
     ipcRenderer.invoke("reset-daily-system"),
-
-
-
-  // Courts
   getCourts: () =>
       ipcRenderer.invoke("get-courts"),
 
@@ -51,10 +41,6 @@ updatePlayer: (id, name, level) =>
 
   removeCourt: (id) =>
       ipcRenderer.invoke("remove-court", id),
-
-
-
-  // Queue
   getQueue: () =>
     ipcRenderer.invoke("get-queue"),
 
@@ -63,8 +49,6 @@ updatePlayer: (id, name, level) =>
 
   removeQueue: (id) =>
     ipcRenderer.invoke("remove-queue", id),
-
-  //matches
   previewNextMatch: (matchType) =>
     ipcRenderer.invoke("preview-next-match", matchType),
   createMatch: (matchType) =>
@@ -75,8 +59,6 @@ updatePlayer: (id, name, level) =>
       courtId,
       requeue
     ),
-
-  // Round Robin
   getRRPlayers: () =>
     ipcRenderer.invoke("get-rr-players"),
   generateRRMatches: (playerIds, matchType) =>
@@ -87,12 +69,8 @@ updatePlayer: (id, name, level) =>
     ipcRenderer.invoke("assign-rr-match", matchId, courtId),
   endRRMatch: (matchId, courtId, requeue) =>
     ipcRenderer.invoke("end-rr-match", matchId, courtId, requeue),
-
-  //datas
   resetAllData: () => 
     ipcRenderer.invoke("reset-all-data"),
-
-  // Settings
   getSettings: () =>
     ipcRenderer.invoke("get-settings"),
   getSetting: (key) =>

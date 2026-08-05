@@ -78,7 +78,7 @@ export default function Sidebar({ activePage, onNavigate, collapsed, onToggle })
         collapsed ? "w-16" : "w-60"
       }`}
     >
-      {/* Header */}
+      
       <div className="h-14 flex items-center px-3 border-b border-[var(--border)]">
         {!collapsed && (
           <span className="font-semibold text-sm tracking-wide text-[var(--text-h)] truncate">
@@ -94,7 +94,7 @@ export default function Sidebar({ activePage, onNavigate, collapsed, onToggle })
         </button>
       </div>
 
-      {/* Nav */}
+      
       <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
         {navGroups.map((group) => {
           const Icon = group.icon;
@@ -159,7 +159,7 @@ export default function Sidebar({ activePage, onNavigate, collapsed, onToggle })
         {standaloneItems.map((item) => renderNavButton(item))}
       </nav>
 
-      {/* Footer */}
+      
       <div className="border-t border-[var(--border)] px-3 py-3">
         {!collapsed && <p className="text-xs text-[var(--text)]/60">v1.0.0</p>}
       </div>

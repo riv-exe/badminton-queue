@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LEVEL_NAMES, getLevelBadge } from "../config/levels";
 
 const statusColors = {
   waiting: "bg-[var(--warning-light)] text-[var(--warning)]",
@@ -34,7 +35,6 @@ function MatchTypeToggle({ matchType, onChange }) {
 }
 
 function NextMatchPreview({ preview, matchType }) {
-  // Guard: if preview data doesn't match the current match type, don't render
   if (!preview || preview.matchType !== matchType) return null;
 
   return (
@@ -48,7 +48,7 @@ function NextMatchPreview({ preview, matchType }) {
 
       {matchType === 'doubles' && preview.success ? (
         <div className="flex items-center gap-3">
-          {/* Team 1 */}
+          
           <div className="flex-1 bg-[var(--surface-hover)] rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--primary)] block mb-1.5">Team 1</span>
             {preview.teams.team1.map((player, i) => (
@@ -56,9 +56,9 @@ function NextMatchPreview({ preview, matchType }) {
                 <span className="w-6 h-6 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                   {player.name.charAt(0)}
                 </span>
-                <div className="min-w-0">
+<div className="min-w-0">
                   <span className="text-sm font-medium text-[var(--text-h)]">{player.name}</span>
-                  <span className="text-[10px] text-[var(--text)] ml-1">({player.level})</span>
+                  <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded-full font-medium ml-1 ${getLevelBadge(player.level)}`}>{player.level}</span>
                 </div>
               </div>
             ))}
@@ -66,7 +66,7 @@ function NextMatchPreview({ preview, matchType }) {
 
           <span className="text-lg font-bold text-[var(--text)]/40 shrink-0">VS</span>
 
-          {/* Team 2 */}
+          
           <div className="flex-1 bg-[var(--surface-hover)] rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--warning)] block mb-1.5">Team 2</span>
             {preview.teams.team2.map((player, i) => (
@@ -76,7 +76,7 @@ function NextMatchPreview({ preview, matchType }) {
                 </span>
                 <div className="min-w-0">
                   <span className="text-sm font-medium text-[var(--text-h)]">{player.name}</span>
-                  <span className="text-[10px] text-[var(--text)] ml-1">({player.level})</span>
+                  <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded-full font-medium ml-1 ${getLevelBadge(player.level)}`}>{player.level}</span>
                 </div>
               </div>
             ))}
@@ -90,7 +90,7 @@ function NextMatchPreview({ preview, matchType }) {
             </span>
             <div className="min-w-0">
               <span className="text-sm font-medium text-[var(--text-h)]">{preview.players[0].name}</span>
-              <span className="text-[10px] text-[var(--text)] ml-1">({preview.players[0].level})</span>
+              <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded-full font-medium ml-1 ${getLevelBadge(preview.players[0].level)}`}>{preview.players[0].level}</span>
             </div>
           </div>
 
@@ -102,7 +102,7 @@ function NextMatchPreview({ preview, matchType }) {
             </span>
             <div className="min-w-0">
               <span className="text-sm font-medium text-[var(--text-h)]">{preview.players[1].name}</span>
-              <span className="text-[10px] text-[var(--text)] ml-1">({preview.players[1].level})</span>
+              <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded-full font-medium ml-1 ${getLevelBadge(preview.players[1].level)}`}>{preview.players[1].level}</span>
             </div>
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function QueueList({ queue, players, onAddToQueue, onRemovePlayer
 
       <div className="p-4 border-b border-[var(--border)] bg-[var(--surface-hover)]/50 space-y-3">
 
-        {/* Row 1: find & add a player */}
+        
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <input
@@ -183,8 +183,8 @@ export default function QueueList({ queue, players, onAddToQueue, onRemovePlayer
                     <span className="w-7 h-7 rounded-full bg-[var(--primary)] text-white text-xs flex items-center justify-center font-medium">
                       {p.name.charAt(0)}
                     </span>
-                    <span className="text-[var(--text-h)]">{p.name}</span>
-                    <span className="text-xs text-[var(--text)] ml-auto">{p.level}</span>
+<span className="text-[var(--text-h)]">{p.name}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ml-auto ${getLevelBadge(p.level)}`}>{p.level}</span>
                   </button>
                 ))}
               </div>
@@ -196,10 +196,10 @@ export default function QueueList({ queue, players, onAddToQueue, onRemovePlayer
             onChange={(e) => setSelectedLevel(e.target.value)}
             className="px-4 py-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)]"
           >
-            <option value="All">All Levels</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
+<option value="All">All Levels</option>
+            {LEVEL_NAMES.map((l) => (
+              <option key={l} value={l}>{l}</option>
+            ))}
           </select>
 
           <button
@@ -211,7 +211,7 @@ export default function QueueList({ queue, players, onAddToQueue, onRemovePlayer
           </button>
         </div>
 
-        {/* Row 2: queue controls, visually separated from the search/add row */}
+        
         <div className="flex items-center justify-between pt-3 border-t border-[var(--border)]">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-[var(--text)] uppercase tracking-wider">
@@ -229,7 +229,7 @@ export default function QueueList({ queue, players, onAddToQueue, onRemovePlayer
         </div>
       </div>
 
-      {/* Next Match Preview */}
+      
       <div className="px-4 py-3">
         <NextMatchPreview preview={preview} matchType={matchType} />
       </div>
@@ -287,7 +287,11 @@ export default function QueueList({ queue, players, onAddToQueue, onRemovePlayer
                       <span className="text-sm font-medium text-[var(--text-h)]">{player.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-sm text-[var(--text)]">{player.level}</td>
+<td className="px-4 py-4">
+                    <span className={`inline-block text-xs px-2.5 py-1 rounded-full font-medium ${getLevelBadge(player.level)}`}>
+                      {player.level}
+                    </span>
+                  </td>
                   <td className="px-4 py-4 text-sm text-[var(--text)]">
                     {player.matches_played}
                   </td>

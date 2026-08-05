@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { LEVEL_NAMES, getLevelBadge } from "../config/levels";
 
 const DOUBLES_CATEGORIES = [
   "Men's Doubles",
@@ -6,8 +7,6 @@ const DOUBLES_CATEGORIES = [
   "Mixed Doubles",
   "No Gender Preference",
 ];
-
-const LEVELS = ["Beginner", "Intermediate", "Advanced"];
 
 export default function PlayerRegistration({ onRegistered }) {
   const [name, setName] = useState("");
@@ -19,23 +18,16 @@ const [doublesCategory, setDoublesCategory] = useState("No Gender Preference");
   const [error, setError] = useState("");
   const [allPlayers, setAllPlayers] = useState([]);
   const inputRef = useRef(null);
-
-  // Load all permanent players once so they can be shown as dropdown selections
-  // while the user types (same database as the All Players page).
   useEffect(() => {
     window.api.getPermanentPlayers()
       .then((data) => setAllPlayers(data || []))
       .catch((err) => console.error("Failed to load all players:", err));
   }, []);
-
-  // Filter permanent players client-side based on the current typed name.
   const searchResults = name.trim()
     ? allPlayers.filter((p) =>
         (p.name || "").toLowerCase().includes(name.trim().toLowerCase())
       )
     : [];
-
-// When a profile is selected from the dropdown, load its data into the form.
   const handleSelectProfile = (profile) => {
     setSelectedProfileId(profile.id);
     setName(profile.name);
@@ -66,8 +58,6 @@ setSelectedProfileId(null);
       level,
       doubles_category: doublesCategory,
     };
-
-    // If the handler did not select from the dropdown, check for an exact match.
     if (!selectedProfileId) {
       try {
         const exact = await window.api.findPlayerProfileByName(name.trim());
@@ -100,7 +90,6 @@ setSelectedProfileId(null);
 
 const handleFocus = () => setNameFocused(true);
   const handleBlur = () => {
-    // Allow time for click on dropdown items to register.
     setTimeout(() => setNameFocused(false), 150);
   };
 
@@ -123,7 +112,7 @@ const handleFocus = () => setNameFocused(true);
       )}
 
       <div className="space-y-3">
-        {/* Name with autocomplete */}
+        
         <div className="relative">
           <label className="block text-xs font-semibold text-[var(--text)] uppercase tracking-wider mb-1">
             Player Name
@@ -154,8 +143,8 @@ onFocus={handleFocus}
                   <span className="w-7 h-7 rounded-full bg-[var(--primary)] text-white text-xs flex items-center justify-center font-medium shrink-0">
                     {p.name.charAt(0)}
                   </span>
-                  <span className="text-[var(--text-h)] truncate">{p.name}</span>
-                  <span className="text-xs text-[var(--text)] ml-auto shrink-0">{p.level}</span>
+<span className="text-[var(--text-h)] truncate">{p.name}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ml-auto shrink-0 ${getLevelBadge(p.level)}`}>{p.level}</span>
                   <span className="text-[10px] text-[var(--primary)] shrink-0">{p.doubles_category}</span>
                 </button>
               ))}
@@ -163,7 +152,7 @@ onFocus={handleFocus}
           )}
         </div>
 
-        {/* Level */}
+        
         <div>
           <label className="block text-xs font-semibold text-[var(--text)] uppercase tracking-wider mb-1">
             Level
@@ -173,13 +162,13 @@ onFocus={handleFocus}
             onChange={(e) => setLevel(e.target.value)}
             className="w-full px-4 py-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-sm text-[var(--text-h)]"
           >
-            {LEVELS.map((l) => (
+{LEVEL_NAMES.map((l) => (
               <option key={l} value={l}>{l}</option>
             ))}
           </select>
         </div>
 
-        {/* Doubles Category */}
+        
         <div>
           <label className="block text-xs font-semibold text-[var(--text)] uppercase tracking-wider mb-1">
             Doubles / Gender Category

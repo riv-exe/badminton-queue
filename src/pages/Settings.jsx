@@ -129,14 +129,10 @@ export default function Settings() {
   const [resetDone, setResetDone] = useState(false);
   const [savedKey, setSavedKey] = useState("");
   const [version] = useState("1.0.0");
-
-  // Load persisted settings + live overview stats on mount
   useEffect(() => {
     loadSettings();
     loadStats();
   }, []);
-
-  // Keep <html> theme class in sync with the chosen mode
   useEffect(() => {
     applyTheme(settings.theme);
   }, [settings.theme]);
@@ -187,8 +183,6 @@ export default function Settings() {
   async function handleSettingChange(key, value) {
     const next = { ...settings, [key]: value };
     setSettings(next);
-
-    // System theme resolves immediately so the UI reflects the choice
     if (key === "theme") applyTheme(value);
 
     try {
@@ -210,7 +204,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-6 max-w-5xl">
-      {/* Page intro */}
+      
       <div className="bg-[var(--primary)] rounded-2xl p-6 text-white flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold leading-tight">Settings</h2>
@@ -223,7 +217,7 @@ export default function Settings() {
         </span>
       </div>
 
-      {/* Overview stats */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Stat label="Registered Players" value={stats.players} icon={Users} color="primary" />
         <Stat label="Courts" value={stats.courts} icon={LayoutGrid} color="success" />
@@ -232,7 +226,7 @@ export default function Settings() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Appearance */}
+        
         <Card
           title="Appearance"
           description="Choose how the app looks."
@@ -261,7 +255,7 @@ export default function Settings() {
           </div>
         </Card>
 
-        {/* Preferences */}
+        
         <Card
           title="Preferences"
           description="Defaults used across the app."
@@ -306,7 +300,7 @@ export default function Settings() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Data management */}
+        
         <Card
           title="Data Management"
           description="Clear or reset application data."
@@ -341,7 +335,7 @@ export default function Settings() {
           )}
         </Card>
 
-        {/* About */}
+        
         <Card
           title="About"
           description="Application information."

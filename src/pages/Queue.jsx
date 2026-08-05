@@ -17,7 +17,6 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    // Read persisted default match type from settings
     window.api.getSettings().then((data) => {
       if (data.defaultMatchType === "singles" || data.defaultMatchType === "doubles") {
         setMatchType(data.defaultMatchType);
@@ -26,7 +25,6 @@ useEffect(() => {
   }, []);
 
 useEffect(() => {
-    // Refresh preview when matchType / queue changes
     window.api.previewNextMatch(matchType).then((p) => {
       setPreview(p);
     }).catch((err) => console.error("Failed to load preview:", err));

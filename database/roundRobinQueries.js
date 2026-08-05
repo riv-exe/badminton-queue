@@ -80,7 +80,6 @@ export function generateRoundRobinMatches(playerIds, matchType = 'singles') {
 }
 
 export function saveRoundRobinMatches(matches) {
-  // Delete existing match_players entries for RR matches first
   db.prepare(`
     DELETE FROM match_players WHERE source = 'round_robin'
   `).run();
@@ -98,11 +97,6 @@ export function saveRoundRobinMatches(matches) {
   `);
 
 const transaction = db.transaction(() => {
-    // Free courts that were hosting round-robin matches (just deleted above),
-    // but do NOT reset courts that still have an active normal queue match.
-    // Without this guard, a court could end up with both a normal match and a
-    // round-robin match marked 'playing', which corrupts the display on the
-    // Courts page (wrong/variable player counts and missing VS).
     db.prepare(`
       UPDATE courts
       SET status = 'available'
@@ -120,13 +114,9 @@ const transaction = db.transaction(() => {
         match.round_number
       );
       const rrMatchId = result.lastInsertRowid;
-
-      // Insert match_players entries
       if (match.match_type === 'doubles' && match.team_one && match.team_two) {
-        // Team 1 players
         insertMP.run(rrMatchId, match.team_one[0], 1, 'doubles');
         insertMP.run(rrMatchId, match.team_one[1], 1, 'doubles');
-        // Team 2 players
         insertMP.run(rrMatchId, match.team_two[0], 2, 'doubles');
         insertMP.run(rrMatchId, match.team_two[1], 2, 'doubles');
       } else {
@@ -159,8 +149,6 @@ export function getRoundRobinMatches() {
     JOIN players p2 ON rrm.player_two_id = p2.id
     ORDER BY rrm.round_number ASC, rrm.id ASC
   `).all();
-
-  // For doubles matches, fetch team member names from match_players
   return matches.map(match => {
     const result = { ...match };
 
@@ -261,8 +249,6 @@ export function endRoundRobinMatch(matchId, courtId, requeue = true) {
       match.player_one_id,
       match.player_two_id
     );
-
-    // Requeue players if requested (addToQueue prevents duplicates)
     if (requeue) {
       addToQueue(match.player_one_id);
       addToQueue(match.player_two_id);

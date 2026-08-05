@@ -23,9 +23,6 @@ export function previewNextMatch(matchType = 'singles'){
     }
 
     let matchedPlayers = [];
-
-    // Strict FIFO queue behavior: take the first player in queue,
-    // then find the next earliest players with the same level
     for(let i = 0; i < waitingPlayers.length; i++){
 
         const level = waitingPlayers[i].level;
@@ -93,9 +90,6 @@ export function createMatch(matchType = 'singles'){
 
     let matchedPlayers = [];
     let playerObjects = [];
-
-    // Strict FIFO queue behavior: take the first player in queue,
-    // then find the next earliest players with the same level
     for(let i = 0; i < waitingPlayers.length; i++){
 
         const level = waitingPlayers[i].level;
@@ -139,10 +133,6 @@ export function createMatch(matchType = 'singles'){
             error:"No available court"
         };
     }
-
-
-    // For doubles: team 1 = players[0,1], team 2 = players[2,3]
-    // For singles: player_one = first, player_two = second
     const playerOneId = matchedPlayers[0];
     const playerTwoId = matchedPlayers[1];
 
@@ -166,15 +156,12 @@ export function createMatch(matchType = 'singles'){
     );
 
     const matchId = result.lastInsertRowid;
-
-    // Insert match_players entries
     const insertMP = db.prepare(`
         INSERT INTO match_players (match_id, player_id, team, match_type, source)
         VALUES (?, ?, ?, ?, 'normal')
     `);
 
     if (matchType === 'doubles') {
-        // Team 1: players[0], players[1]; Team 2: players[2], players[3]
         insertMP.run(matchId, matchedPlayers[0], 1, 'doubles');
         insertMP.run(matchId, matchedPlayers[1], 1, 'doubles');
         insertMP.run(matchId, matchedPlayers[2], 2, 'doubles');
@@ -183,9 +170,6 @@ export function createMatch(matchType = 'singles'){
         insertMP.run(matchId, matchedPlayers[0], null, 'singles');
         insertMP.run(matchId, matchedPlayers[1], null, 'singles');
     }
-
-
-    // Build parameterized placeholders for IN clauses
     const placeholders = matchedPlayers.map(() => '?').join(',');
     
     db.prepare(`
@@ -227,8 +211,6 @@ export function createMatch(matchType = 'singles'){
 }
 
 export function endMatch(courtId, requeue = true){
-    
-    // Helper to free players from match_players
     const freePlayers = (matchId, source) => {
         const matchPlayers = db.prepare(`
             SELECT player_id FROM match_players
@@ -253,8 +235,6 @@ export function endMatch(courtId, requeue = true){
 
         return playerIds;
     };
-
-    // First check normal queue matches table
     let match = db.prepare(`
         SELECT *
         FROM matches
@@ -288,8 +268,6 @@ export function endMatch(courtId, requeue = true){
             players: playerIds
         };
     }
-
-    // If no normal match found, check round_robin_matches table
     const rrMatch = db.prepare(`
         SELECT *
         FROM round_robin_matches

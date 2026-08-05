@@ -36,7 +36,7 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
         transition-shadow hover:shadow-md
       `}
     >
-      {/* Header */}
+      
       <div className="flex items-start justify-between">
         <div className="space-y-1.5">
           <h3 className="text-lg font-bold text-[var(--text-h)] leading-tight">
@@ -57,7 +57,7 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
         </button>
       </div>
 
-{/* Players */}
+
       <div className="flex-1">
         {players.length > 0 ? (
           <div className="space-y-2">
@@ -68,7 +68,7 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
 
             {players.length === 4 ? (
               <div className="space-y-2">
-                {/* Team 1 */}
+                
                 <div className="bg-[var(--primary-light)]/50 rounded-xl p-2">
                   <p className="text-[10px] font-semibold text-[var(--primary)] uppercase tracking-wide mb-1.5 px-1">Team 1</p>
                   <div className="flex flex-wrap gap-1.5">
@@ -85,11 +85,11 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
                     ))}
                   </div>
                 </div>
-                {/* VS */}
+                
                 <div className="flex items-center justify-center">
                   <span className="text-[10px] font-bold text-[var(--text)]/40 uppercase tracking-widest">VS</span>
                 </div>
-                {/* Team 2 */}
+                
                 <div className="bg-[var(--warning-light)]/50 rounded-xl p-2">
                   <p className="text-[10px] font-semibold text-[var(--warning)] uppercase tracking-wide mb-1.5 px-1">Team 2</p>
                   <div className="flex flex-wrap gap-1.5">
@@ -109,7 +109,7 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
               </div>
             ) : players.length === 2 ? (
               <div className="space-y-2">
-                {/* Player 1 */}
+                
                 <div className="bg-[var(--primary-light)]/50 rounded-xl p-2">
                   <span className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1 bg-[var(--surface)] rounded-full text-sm">
                     <span className="w-6 h-6 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-[11px] font-semibold">
@@ -118,11 +118,11 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
                     {players[0]}
                   </span>
                 </div>
-                {/* VS */}
+                
                 <div className="flex items-center justify-center">
                   <span className="text-[10px] font-bold text-[var(--text)]/40 uppercase tracking-widest">VS</span>
                 </div>
-                {/* Player 2 */}
+                
                 <div className="bg-[var(--warning-light)]/50 rounded-xl p-2">
                   <span className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1 bg-[var(--surface)] rounded-full text-sm">
                     <span className="w-6 h-6 rounded-full bg-[var(--warning)] text-white flex items-center justify-center text-[11px] font-semibold">
@@ -155,7 +155,7 @@ export default function CourtCard({ court, requeuePlayers = true, onEndMatch, on
         )}
       </div>
 
-{/* Action */}
+
       {!isAvailable && (
         <div className="pt-3 border-t border-[var(--border)]">
           <button

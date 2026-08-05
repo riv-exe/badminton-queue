@@ -42,7 +42,6 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    // Read persisted auto-requeue default from settings
     window.api.getSettings().then((data) => {
       if (data.autoRequeue === "true" || data.autoRequeue === "false") {
         setRequeuePlayers(data.autoRequeue === "true");

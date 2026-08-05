@@ -66,26 +66,16 @@ export function generateDoublesRoundRobinSchedule(playerIds) {
   if (!Array.isArray(playerIds) || playerIds.length < 4) {
     return [];
   }
-
-  // Ensure even number of players for doubles
   const ids = [...playerIds];
   if (ids.length % 2 !== 0) {
-    // Odd number: drop the last player so we have an even count
     ids.pop();
   }
-
-  // Partition players into fixed teams of 2 (FIFO order)
-  // Team 1: ids[0], ids[1]; Team 2: ids[2], ids[3]; etc.
   const teams = [];
   for (let i = 0; i < ids.length; i += 2) {
     teams.push([ids[i], ids[i + 1]]);
   }
-
-  // Use team indices (0, 1, 2, ...) with the circle method
   const teamIndices = teams.map((_, idx) => idx);
   const schedule = generateRoundRobinSchedule(teamIndices);
-
-  // Convert team indices back to player IDs
   const rounds = schedule.map(round => ({
     round_number: round.round_number,
     matches: round.matches.map(m => ({

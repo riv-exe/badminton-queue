@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LEVEL_NAMES, getLevelBadge } from "../../config/levels";
 
 const DOUBLES_CATEGORIES = [
   "Men's Doubles",
@@ -6,8 +7,6 @@ const DOUBLES_CATEGORIES = [
   "Mixed Doubles",
   "No Gender Preference",
 ];
-
-const LEVELS = ["Beginner", "Intermediate", "Advanced"];
 
 export default function AllPlayersTable({ players, onDeleteProfile, onRefresh }) {
   const [editId, setEditId] = useState(null);
@@ -88,10 +87,12 @@ const saveEdit = async () => {
                         onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
                         className="px-2 py-1 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-sm"
                       >
-                        {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+{LEVEL_NAMES.map((l) => <option key={l} value={l}>{l}</option>)}
                       </select>
-                    ) : (
-                      <span className="text-sm text-[var(--text)]">{player.level}</span>
+) : (
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getLevelBadge(player.level)}`}>
+                        {player.level}
+                      </span>
                     )}
                   </td>
                   <td className="px-4 py-4">

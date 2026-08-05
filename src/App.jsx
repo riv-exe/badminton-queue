@@ -24,8 +24,6 @@ const pageTitles = {
 function App() {
   const [activePage, setActivePage] = useState("queue");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  // Apply persisted theme preference on startup (before first paint matters little here)
   useEffect(() => {
     async function applySavedTheme() {
       try {

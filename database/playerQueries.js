@@ -1,6 +1,4 @@
 import db from "./database.js";
-
-// Ensure the new columns exist (defensive for edge cases)
 function ensurePlayerColumns() {
   const playersInfo = db.prepare(`PRAGMA table_info(players)`).all();
   const hasDoublesCat = playersInfo.some((col) => col.name === "doubles_category");
@@ -18,8 +16,6 @@ function ensurePlayerColumns() {
   }
 }
 ensurePlayerColumns();
-
-// ---------- Permanent Player Profiles ----------
 
 export function getPermanentPlayers() {
   return db.prepare(`
@@ -88,8 +84,6 @@ export function deletePlayerProfile(id) {
   return { success: true };
 }
 
-// ---------- Daily Registration (today's players) ----------
-
 export function getDailyPlayers() {
   return db.prepare(`
     SELECT
@@ -103,10 +97,7 @@ export function getDailyPlayers() {
     ORDER BY players.id DESC
   `).all();
 }
-
-// Register a player for today. Returns today's player row id.
 export function registerDailyPlayer({ name, level, doubles_category, profile_id }) {
-  // If a profile_id isn't provided, see if an exact profile match exists.
   let resolvedProfileId = profile_id || null;
   if (!resolvedProfileId) {
     const existing = findPlayerProfileByName(name);
@@ -114,8 +105,6 @@ export function registerDailyPlayer({ name, level, doubles_category, profile_id 
       resolvedProfileId = existing.id;
     }
   }
-
-  // If we have a resolved profile, update it with the edited registration data.
   if (resolvedProfileId) {
     updatePlayerProfile(resolvedProfileId, {
       name,
@@ -123,15 +112,12 @@ export function registerDailyPlayer({ name, level, doubles_category, profile_id 
       doubles_category,
     });
   } else {
-    // No match -> create a new permanent player profile.
     resolvedProfileId = createPlayerProfile({
       name,
       level,
       doubles_category,
     });
   }
-
-  // Create today's registration record referencing the profile.
   const result = db.prepare(`
     INSERT INTO players (name, level, doubles_category, registration_date, profile_id)
     VALUES (?, ?, ?, date('now'), ?)
@@ -139,21 +125,13 @@ export function registerDailyPlayer({ name, level, doubles_category, profile_id 
 
   return { success: true, id: result.lastInsertRowid, profile_id: resolvedProfileId };
 }
-
-// Called at the start of a new day to clear today's active system state.
 export function resetDailySystem() {
-  // Clear queue
   db.prepare(`DELETE FROM queue`).run();
-  // Reset today's players' status
   db.prepare(`UPDATE players SET status = 'waiting' WHERE registration_date = date('now')`).run();
-  // Clear pending round robin matches
   db.prepare(`DELETE FROM round_robin_matches WHERE status != 'playing'`).run();
-  // Reset courts
   db.prepare(`UPDATE courts SET status = 'available'`).run();
   return { success: true };
 }
-
-// ---------- Legacy / Compatibility functions (today's players) ----------
 
 export function addPlayer(name, level) {
   const existingPlayer = db.prepare(`
@@ -179,7 +157,6 @@ export function getPlayers() {
 }
 
 export function deletePlayer(id) {
-  // Prevent deleting a player who is currently playing
   const activeNormalMatch = db.prepare(`
     SELECT id FROM matches
     WHERE (player_one = ? OR player_two = ?) AND status = 'playing'

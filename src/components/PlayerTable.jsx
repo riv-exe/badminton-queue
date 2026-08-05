@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LEVEL_NAMES, getLevelBadge } from "../config/levels";
 
 export default function PlayerTable({ players, onDeletePlayer, onUpdatePlayer }) {
   const [editId, setEditId] = useState(null);
@@ -72,14 +73,14 @@ export default function PlayerTable({ players, onDeletePlayer, onUpdatePlayer })
                           className="px-2 py-1 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-sm text-[var(--text-h)] w-32 focus:outline-none focus:border-[var(--primary)]"
                           autoFocus
                         />
-                        <select
+<select
                           value={editLevel}
                           onChange={(e) => setEditLevel(e.target.value)}
                           className="px-2 py-1 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-sm"
                         >
-                          <option value="Beginner">Beginner</option>
-                          <option value="Intermediate">Intermediate</option>
-                          <option value="Advanced">Advanced</option>
+                          {LEVEL_NAMES.map((l) => (
+                            <option key={l} value={l}>{l}</option>
+                          ))}
                         </select>
                       </div>
                     ) : (
@@ -87,9 +88,11 @@ export default function PlayerTable({ players, onDeletePlayer, onUpdatePlayer })
                         <span className="w-9 h-9 rounded-full bg-[var(--primary)] text-white text-sm flex items-center justify-center font-medium">
                           {player.name.charAt(0)}
                         </span>
-                        <div>
+<div>
                           <p className="text-sm font-medium text-[var(--text-h)]">{player.name}</p>
-                          <p className="text-xs text-[var(--text)]">Level: {player.level}</p>
+                          <span className={`inline-block text-[11px] px-2 py-0.5 rounded-full font-medium mt-1 ${getLevelBadge(player.level)}`}>
+                            {player.level}
+                          </span>
                         </div>
                       </div>
                     )}

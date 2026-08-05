@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PlayerRegistration from "../components/PlayerRegistration";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { LEVEL_NAMES, getLevelBadge } from "../config/levels";
 
 const statusColors = {
   waiting: "bg-[var(--success-light)] text-[var(--success)]",
@@ -80,7 +81,7 @@ export default function TodayPlayers() {
 
       <PlayerRegistration onRegistered={loadPlayers} />
 
-      {/* Stats */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-4 text-center">
           <p className="text-2xl font-bold text-[var(--text-h)]">{players.length}</p>
@@ -96,7 +97,7 @@ export default function TodayPlayers() {
         </div>
       </div>
 
-      {/* Table */}
+      
       <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden">
         <div className="px-5 py-4 border-b border-[var(--border)]">
           <h3 className="font-semibold text-[var(--text-h)]">Today's Registered Players</h3>
@@ -155,17 +156,19 @@ export default function TodayPlayers() {
                     </td>
                     <td className="px-5 py-3">
                       {editId === player.id ? (
-                        <select
+<select
                           value={editLevel}
                           onChange={(e) => setEditLevel(e.target.value)}
                           className="px-2 py-1 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-sm text-[var(--text-h)]"
                         >
-                          <option value="Beginner">Beginner</option>
-                          <option value="Intermediate">Intermediate</option>
-                          <option value="Advanced">Advanced</option>
+                          {LEVEL_NAMES.map((l) => (
+                            <option key={l} value={l}>{l}</option>
+                          ))}
                         </select>
                       ) : (
-                        <span className="text-sm text-[var(--text)]">{player.level}</span>
+                        <span className={`inline-block text-xs px-2.5 py-1 rounded-full font-medium ${getLevelBadge(player.level)}`}>
+                          {player.level}
+                        </span>
                       )}
                     </td>
                     <td className="px-5 py-3">

@@ -122,11 +122,7 @@ CREATE TABLE IF NOT EXISTS match_players (
 
 initDatabase();
 
-
-// ---- MIGRATION: populate match_players from existing data ----
-
 const migration = db.transaction(() => {
-  // Check if we've already run the migration
   const schemaVersion = db.prepare(
     `SELECT value FROM settings WHERE key = 'schema_version'`
   ).get();
@@ -135,8 +131,6 @@ const migration = db.transaction(() => {
     console.log("Schema already at version:", schemaVersion.value);
     return;
   }
-
-  // Add match_type columns to existing tables if they don't exist (for databases created before this change)
   const tableInfo = db.prepare(`PRAGMA table_info(matches)`).all();
   const hasMatchType = tableInfo.some((col) => col.name === "match_type");
   if (!hasMatchType) {
@@ -144,16 +138,11 @@ const migration = db.transaction(() => {
     db.prepare(`ALTER TABLE match_history ADD COLUMN match_type TEXT DEFAULT 'singles'`).run();
     db.prepare(`ALTER TABLE round_robin_matches ADD COLUMN match_type TEXT DEFAULT 'singles'`).run();
   }
-
-  // Check if match_players is empty (newly created) and old tables have data
   const matchPlayersCount = db.prepare(`SELECT COUNT(*) as cnt FROM match_players`).get().cnt;
   if (matchPlayersCount > 0) {
-    // Already migrated
     db.prepare(`INSERT OR REPLACE INTO settings (key, value) VALUES ('schema_version', '2')`).run();
     return;
   }
-
-  // Migrate matches table
   const matches = db.prepare(`SELECT id, player_one, player_two, match_type FROM matches`).all();
   const insertMP = db.prepare(`
     INSERT INTO match_players (match_id, player_id, team, match_type, source)
@@ -165,8 +154,6 @@ const migration = db.transaction(() => {
     insertMP.run(match.id, match.player_one, team, mt);
     insertMP.run(match.id, match.player_two, mt === 'doubles' ? 2 : null, mt);
   }
-
-  // Migrate match_history table
   const historyEntries = db.prepare(`SELECT id, player_one, player_two, match_type FROM match_history`).all();
   for (const entry of historyEntries) {
     const mt = entry.match_type || 'singles';
@@ -174,8 +161,6 @@ const migration = db.transaction(() => {
     insertMP.run(entry.id, entry.player_one, team, mt);
     insertMP.run(entry.id, entry.player_two, mt === 'doubles' ? 2 : null, mt);
   }
-
-  // Migrate round_robin_matches table
   const rrMatches = db.prepare(`SELECT id, player_one_id, player_two_id, match_type FROM round_robin_matches`).all();
   const insertRRMP = db.prepare(`
     INSERT INTO match_players (match_id, player_id, team, match_type, source)
@@ -187,15 +172,11 @@ const migration = db.transaction(() => {
     insertRRMP.run(match.id, match.player_one_id, team, mt);
     insertRRMP.run(match.id, match.player_two_id, mt === 'doubles' ? 2 : null, mt);
   }
-
-  // Mark migration as complete
   db.prepare(`INSERT OR REPLACE INTO settings (key, value) VALUES ('schema_version', '2')`).run();
   console.log("Migration to schema v2 complete (match_players populated)");
 });
 
 migration();
-
-// ---- MIGRATION v3: separate permanent player profiles from daily registrations ----
 
 const profileMigration = db.transaction(() => {
   const profileVersion = db.prepare(
@@ -221,8 +202,6 @@ if (!hasRegDate) {
   if (!hasProfileId) {
     db.prepare(`ALTER TABLE players ADD COLUMN profile_id INTEGER REFERENCES player_profiles(id) ON DELETE SET NULL`).run();
   }
-
-  // Backfill player_profiles from existing players and link them
   const players = db.prepare(`SELECT * FROM players`).all();
   const insertProfile = db.prepare(`
     INSERT INTO player_profiles (name, level, created_at)

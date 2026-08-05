@@ -182,7 +182,7 @@ export default function PublicDisplay({ courts = demoCourts, queueNext = demoQue
                       </>
                     ) : court.players?.length === 4 ? (
                       <div className="space-y-2">
-                        {/* Team 1 */}
+                        
                         <div className="bg-[var(--primary-light)]/30 rounded-xl p-2">
                           <p className={`font-semibold text-[var(--primary)] text-center mb-1 ${dense ? 'text-[10px]' : 'text-xs'}`}>Team 1</p>
                           <div className="grid grid-cols-2 gap-1.5">
@@ -198,9 +198,9 @@ export default function PublicDisplay({ courts = demoCourts, queueNext = demoQue
                             ))}
                           </div>
                         </div>
-                        {/* VS */}
+                        
                         <p className={`text-center font-bold opacity-40 ${dense ? 'text-xs' : 'text-sm'}`}>VS</p>
-                        {/* Team 2 */}
+                        
                         <div className="bg-[var(--warning-light)]/30 rounded-xl p-2">
                           <p className={`font-semibold text-[var(--warning)] text-center mb-1 ${dense ? 'text-[10px]' : 'text-xs'}`}>Team 2</p>
                           <div className="grid grid-cols-2 gap-1.5">

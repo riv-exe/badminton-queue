@@ -62,15 +62,11 @@ function createWindow() {
 
   mainWindow.loadFile(indexPath);
 }
-
-//players
 ipcMain.handle("get-players", () => {
   const players = getPlayers();
 
   return players;
 });
-
-//courts
 ipcMain.handle("get-courts", () => {
   const courts = getCourts();
 
@@ -90,8 +86,6 @@ ipcMain.handle("remove-court", (event, id)=>{
     return removeCourt(id);
 
 });
-
-//queue
 ipcMain.handle("get-queue", () => {
 
   const queue = getQueue();
@@ -132,8 +126,6 @@ ipcMain.handle("delete-player", (event, id) => {
 ipcMain.handle("update-player", (event, id, name, level) => {
   return updatePlayer(id, name, level);
 });
-
-// Player Profiles (permanent players)
 ipcMain.handle("get-permanent-players", () => {
   return getPermanentPlayers();
 });
@@ -161,8 +153,6 @@ ipcMain.handle("update-player-profile", (event, id, profile) => {
 ipcMain.handle("delete-player-profile", (event, id) => {
   return deletePlayerProfile(id);
 });
-
-// Daily registration
 ipcMain.handle("register-daily-player", (event, data) => {
   return registerDailyPlayer(data || {});
 });
@@ -174,8 +164,6 @@ ipcMain.handle("get-daily-players", () => {
 ipcMain.handle("reset-daily-system", () => {
   return resetDailySystem();
 });
-
-//matches
 ipcMain.handle("preview-next-match", (event, matchType) => {
   return previewNextMatch(matchType || 'singles');
 });
@@ -204,8 +192,6 @@ ipcMain.handle("end-match", (event, courtId, requeue)=>{
   };
 
 });
-
-// Round Robin
 ipcMain.handle("get-rr-players", () => {
   return getAllPlayers();
 });
@@ -239,13 +225,9 @@ app.whenReady().then(() => {
 
   createWindow();
 });
-
-//datas
 ipcMain.handle("reset-all-data", () => {
     return resetAllData();
 });
-
-// Settings
 ipcMain.handle("get-settings", () => {
   return getAllSettings();
 });

@@ -1,15 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
+import { LEVEL_NAMES, getLevelBadge } from "../config/levels";
 
 const statusColors = {
   pending: "bg-[var(--warning-light)] text-[var(--warning)]",
   playing: "bg-[var(--primary-light)] text-[var(--primary)]",
   completed: "bg-[var(--success-light)] text-[var(--success)]",
-};
-
-const levelStyles = {
-  Beginner: "bg-blue-100 text-blue-700",
-  Intermediate: "bg-amber-100 text-amber-700",
-  Advanced: "bg-purple-100 text-purple-700",
 };
 
 function MatchTypeToggle({ matchType, onChange }) {
@@ -171,8 +166,8 @@ async function handleGenerateMatches() {
 
   const rounds = groupMatchesByRound(filteredMatches);
 
-  function interleaveByLevel(roundMatches) {
-    const levelOrder = ["Beginner", "Intermediate", "Advanced"];
+function interleaveByLevel(roundMatches) {
+    const levelOrder = LEVEL_NAMES;
 
     const groups = {};
     roundMatches.forEach((match) => {
@@ -275,9 +270,9 @@ async function handleGenerateMatches() {
                   onChange={() => togglePlayer(player.id)}
                   className="rounded"
                 />
-                <div className="flex items-center gap-1.5 min-w-0">
+<div className="flex items-center gap-1.5 min-w-0">
                   <span className="truncate">{player.name}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--surface-hover)] text-[var(--text)] shrink-0">
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${getLevelBadge(player.level)}`}>
                     {player.level}
                   </span>
                 </div>
@@ -391,10 +386,10 @@ async function handleGenerateMatches() {
                             )}
                           </td>
 
-                          <td className="px-4 py-4">
+<td className="px-4 py-4">
                             <span
                               className={`text-xs px-2 py-1 rounded-full font-medium ${
-                                levelStyles[match.player_one_level] ||
+                                getLevelBadge(match.player_one_level) ||
                                 "bg-[var(--surface-hover)] text-[var(--text)]"
                               }`}
                             >
